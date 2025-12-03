@@ -1,0 +1,84 @@
+#enables the use of mouse
+set -g mouse on
+# ==========================
+# 1. CORE SETTINGS
+# ==========================
+
+# Change the prefix from 'C-b' to 'C-Space'
+unbind C-b
+set -g prefix C-Space
+bind C-Space send-prefix
+
+# Enable mouse support (allows you to click windows and resize panes with mouse)
+set -g mouse on
+
+# Start window and pane numbering at 1, (0 is too hard to reach)
+set -g base-index 1
+set -g pane-base-index 1
+set-window-option -g pane-base-index 1
+set-option -g renumber-windows on
+
+# Allow automatic renaming of windows
+set -g allow-rename on
+
+# ==========================
+# 2. KEY BINDINGS
+# ==========================
+
+# Reload config file with 'Prefix + r'
+bind r source-file ~/.tmux.conf \; display "Config Reloaded!"
+
+# Split panes using | and - (Visually easier to remember)
+# Open new panes in the same directory as the current pane
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+# Use Alt-arrow keys without prefix key to switch panes
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+# Use Shift-arrow to switch windows (no prefix needed)
+bind -n S-Left  previous-window
+bind -n S-Right next-window
+
+# ==========================
+# 3. VIM-STYLE KEYS (Optional but recommended)
+# ==========================
+
+# Use Vim keys (h, j, k, l) for pane navigation
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# Use Vim keys for resizing panes (Prefix + H/J/K/L)
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+# ==========================
+# 4. COPY MODE & CLIPBOARD
+# ==========================
+
+# Use vi keys in copy mode (so you can use h,j,k,l to move)
+set-window-option -g mode-keys vi
+
+# ENTER COPY MODE: Prefix + [  (Default) 
+# We will unbind it and use 'Prefix + Escape' or just 'v' (optional)
+# But let's stick to 'Prefix + [' for now to keep it standard.
+
+# SETUP 'v' to begin selection as in Vim
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+
+# SETUP 'y' to yank (copy) to system clipboard
+# NOTE: CHOOSE ONE of the lines below based on your OS setup and uncomment it!
+
+# -- FOR WAYLAND USERS (Hyprland, Sway, etc) --
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "wl-copy"
+
+# -- FOR X11 USERS (i3, xfce, etc) --
+# bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -in -selection clipboard"
